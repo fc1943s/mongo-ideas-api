@@ -1,0 +1,32 @@
+version: '3.5'
+
+networks:
+  ideas:
+    driver: bridge
+    
+volumes:
+  data-mongodb:
+    
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo:4.2.5-bionic
+    volumes:
+      - data-mongodb:/data/db
+    networks:
+      - ideas
+    restart: unless-stopped
+
+  api:
+    container_name: api
+    build: src
+    environment:
+      MONGODB_HOST: mongodb
+    ports:
+      - 5000:5000
+    networks:
+      - ideas
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
